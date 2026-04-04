@@ -27,7 +27,7 @@ fileInput.addEventListener('change', function(event){
         
 
         // 3. Wait for BOTH files to finish reading
-        Promise.all([followersTextPromise, followingTextPromise]).then(function(results) {
+        Promise.all([followersTextPromise, followingTextPromise]).then(function(results){
             
             // results[0] is followers, results[1] is following
             // 4. Convert the raw text into actual JavaScript Objects
@@ -62,10 +62,28 @@ fileInput.addEventListener('change', function(event){
             }
 
             console.log(traitors)
-            console.log(cleanFollowers)
-            console.log(cleanFollowing)
-    
 
+            // ---------------------------------------------------------
+            // RENDER TO THE HTML PAGE
+            // ---------------------------------------------------------
+            
+            // 1. Grab the empty list container from your HTML
+            const listContainer = document.getElementById('traitor-list');
+            
+            // 2. Clear out any old data (in case you upload a second zip later)
+            listContainer.innerHTML = ''; 
+
+            // 3. Loop through your traitors array
+            for (const traitor of traitors) {
+                // Create a new bullet point
+                const listItem = document.createElement('li');
+                
+                // Add the username as a clickable link that opens in a new tab
+                listItem.innerHTML = `<a href="https://www.instagram.com/${traitor}" target="_blank" rel="noopener noreferrer">${traitor}</a>`;
+                
+                // Attach the bullet point to the main list
+                listContainer.appendChild(listItem);
+            }
 
         }).catch(function(err) {
             console.error("Could not find or parse the JSON files. Check the file paths!", err);
