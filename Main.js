@@ -51,8 +51,21 @@ fileInput.addEventListener('change', function(event){
             });
 
             console.log("WE GOT THE DATA:");
-            console.log("Followers:", cleanFollowers);
-            console.log("Following:", cleanFollowing);
+            
+            const traitors = [];
+
+            const truthTable = new Set(cleanFollowers);
+            for(const following of cleanFollowing){
+                if(!truthTable.has(following)){
+                    traitors.push(following)
+                }
+            }
+
+            console.log(traitors)
+            console.log(cleanFollowers)
+            console.log(cleanFollowing)
+    
+
 
         }).catch(function(err) {
             console.error("Could not find or parse the JSON files. Check the file paths!", err);
