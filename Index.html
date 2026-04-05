@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traitor Tracker v2.0 | Privacy-First IG Audit</title>
+    <title>IG Traitor| Privacy-First IG Audit</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <style>
-        /* --- GUCCI CSS VARIABLES --- */
         :root {
             --bg: #0f172a;
             --card: #1e293b;
@@ -21,7 +20,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -29,15 +28,10 @@
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            line-height: 1.6;
         }
 
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
+        .container { max-width: 900px; width: 100%; }
 
-        /* --- UPLOAD SECTION --- */
         .upload-section {
             background: var(--card);
             padding: 40px;
@@ -45,229 +39,177 @@
             border: 2px dashed var(--accent);
             text-align: center;
             margin-bottom: 20px;
-            transition: transform 0.2s;
         }
 
-        .upload-section:hover {
-            transform: translateY(-2px);
-            border-style: solid;
-        }
-
-        h1 { color: var(--accent); margin: 0 0 10px 0; font-size: 2.5rem; }
+        h1 { color: var(--accent); margin-bottom: 10px; font-size: 2.5rem; }
         .subtitle { color: var(--text-muted); margin-bottom: 25px; }
 
-        input[type="file"] {
-            background: var(--bg);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            color: var(--text);
+        #zip-upload { display: none; }
+
+        .custom-file-label {
+            display: inline-block;
+            padding: 12px 28px;
+            background-color: var(--accent);
+            color: var(--bg);
+            font-weight: 700;
+            border-radius: 50px;
             cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
         }
 
-        /* --- COLLAPSIBLE INSTRUCTIONS --- */
+        .file-name-display { margin-top: 15px; color: var(--text-muted); font-family: monospace; }
+
         .how-to-use {
             background: var(--card);
             border-radius: 12px;
             margin-bottom: 40px;
             border: 1px solid var(--border);
             overflow: hidden;
+            text-align: left;
         }
 
-        summary {
-            padding: 15px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--accent);
-            background: #1e293b;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        summary { padding: 15px 20px; cursor: pointer; color: var(--accent); font-weight: 600; background: #1e293b; }
 
-        summary:hover { background: #2d3e54; }
-
-        summary::after {
-            content: '▼';
-            font-size: 0.8rem;
-            transition: transform 0.3s;
-        }
-
-        details[open] summary::after { transform: rotate(180deg); }
-
-        .instructions-content {
-            padding: 25px;
-            border-top: 1px solid var(--border);
-        }
+        .instructions-content { padding: 25px; border-top: 1px solid var(--border); }
 
         .step { margin-bottom: 30px; }
-        .step h3 { color: var(--accent); margin-bottom: 10px; font-size: 1.1rem; }
-        .step p { font-size: 0.95rem; color: var(--text-muted); }
+        .step h3 { color: var(--accent); margin-bottom: 10px; }
+
+        .highlight-jump {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white !important;
+            border-radius: 8px;
+            text-decoration: none;
+        }
 
         .screenshot-placeholder {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 15px;
-            color: #475569;
-            font-style: italic;
-            overflow: hidden;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-top: 20px;
+
+        /* --- VERTICAL PHONE RATIO --- */
+        width: 280px;      /* Fixed width for a "phone" look */
+        height: 500px;     /* Taller height to fit the whole scroll */
+
+        /* Perfect Center */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        overflow: hidden;
+        /* Optional: center the box itself if the text is centered */
+        margin-left: auto;
+        margin-right: auto;
         }
 
-        /* --- THE DASHBOARD --- */
+        .step-img {
+        width: 100%;
+        height: 100%;
+        /* 'contain' ensures the whole phone screen is visible */
+        object-fit: contain; 
+        display: block;
+        }
+        .step {
+        margin-bottom: 25px;
+        background: #1e293b; /* Match card color */
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        }
+        /* 1. Make sure the body/container pushes everything to the middle */
+        body {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centers items horizontally */
+        justify-content: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        }
+
+        /* 2. Constrain the container so it doesn't span the whole 4K screen */
+        .container {
+        width: 100%;
+        max-width: 1000px; /* Adjust this to make the dashboard wider/narrower */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
+
+        /* 3. Make the Dashboard grid center its content */
         .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Two equal columns */
+        gap: 25px;
+        width: 100%; /* Fill the container */
+        justify-content: center; /* Centers the grid itself */
         }
 
-        .list-card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 25px;
-            min-height: 400px;
-            border: 1px solid var(--border);
+        /* 4. Center the text inside the cards */
+        .list-card h2 {
+        text-align: center;
+        justify-content: center; /* If using flex in H2 */
         }
 
-        h2 { 
-            margin-top: 0;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        ul { list-style: none; padding: 0; margin: 0; }
-
-        li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 8px;
-            border-bottom: 1px solid #334155;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        li a { 
-            color: var(--text); 
-            text-decoration: none; 
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        li a:hover { color: var(--accent); text-decoration: underline; }
-
-        .btn {
-            padding: 6px 14px;
-            border-radius: 8px;
-            border: 1px solid currentColor;
-            background: transparent;
-            cursor: pointer;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s;
-        }
-
-        #traitor-list .btn { color: var(--danger); }
-        #traitor-list .btn:hover { background: var(--danger); color: white; }
+        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .list-card { background: var(--card); border-radius: 16px; padding: 25px; min-height: 400px; border: 1px solid var(--border); }
+        h2 { border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #334155; }
+        li a { color: var(--text); text-decoration: none; }
         
-        #dismissed-list .btn { color: var(--success); }
-        #dismissed-list .btn:hover { background: var(--success); color: white; }
+        .btn { padding: 6px 14px; border-radius: 8px; cursor: pointer; background: transparent; }
+        #traitor-list .btn { color: var(--danger); border: 1px solid var(--danger); }
+        #dismissed-list .btn { color: var(--success); border: 1px solid var(--success); }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Responsive tweak for mobile */
-        @media (max-width: 600px) {
-            .dashboard { grid-template-columns: 1fr; }
-        }
-        /* Hide the ugly default input */
-        #zip-upload {
-        display: none;
-        }
-
-        /* Style the label as a sleek button */
-        .custom-file-label {
-        display: inline-block;
-        padding: 12px 28px;
-        background-color: var(--accent);
-        color: var(--bg); /* Dark text on light blue */
-        font-weight: 700;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
-        }
-
-        .custom-file-label:hover {
-        transform: translateY(-2px);
-        background-color: #7dd3fc; /* Lighter blue on hover */
-        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
-        }
-
-        .custom-file-label:active {
-        transform: translateY(0);
-        }
-
-        /* Style the filename display below the button */
-        .file-name-display {
-        margin-top: 15px;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        font-family: monospace;
-        }
+        @media (max-width: 600px) { .dashboard { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <div class="container">
         <header class="upload-section">
-            <h1>Traitor Tracker</h1>
+            <h1>IG Traitor</h1>
             <p class="subtitle">Securely identify who isn't following you back.</p>
-
             <input type="file" id="zip-upload" accept=".zip" hidden>
-
-            <label for="zip-upload" class="custom-file-label">
-                Select Instagram Zip 📁
-            </label>
-
+            <label for="zip-upload" class="custom-file-label">Select Your Instagram Zip</label>
             <div id="file-name" class="file-name-display">No file chosen</div>
         </header>
+
         <details class="how-to-use">
-            <summary>New here? View the Quick Start Guide 📖</summary>
+            <summary>You new around here? View the Guide below for Instructions.</summary>
             <div class="instructions-content">
                 
                 <div class="step">
                     <h3>1. Request Your Data from Instagram</h3>
-                    <p>Open Instagram and navigate to <b>Settings > Accounts Center > Your Information > Download Your Information</b>. Request a download, select <b>"Some of your information"</b>, and check <b>"Followers and Following"</b>. Ensure the format is set to <b>JSON</b>.</p>
+                    <p>Use the direct link below to jump straight to Meta's Download Center. <br> Choose <b>"Create Export"</b> > <b>"Export to Device"</b>, and then Customize Information to only <b>"Followers and Following"</b>. When all these steps are done it should match the screenshot.</p>
+
+                    <a href="https://accountscenter.instagram.com/info_and_permissions/dyi/" target="_blank" class="highlight-jump">
+                        JUMP TO DOWNLOAD CENTER ↗
+                    </a>
+
+                    <p style="font-size: 0.8rem; margin-top: 15px; color: var(--accent);">
+                        <b>Pro Tip:</b> Make sure to set the <b>Format to JSON</b> and the <b>Date Range to "All Time"</b>!
+                    </p>
+
                     <div class="screenshot-placeholder">
-                        [Image: Instagram Export Interface Screenshot]
+                        <img src="Confirm Export tut.png" alt="Step 1 Guide" class="step-img">
                     </div>
                 </div>
 
                 <div class="step">
                     <h3>2. Upload Your .zip File</h3>
-                    <p>Once your file arrives via email (usually within 5-10 mins), download it and upload it above. <b>Note:</b> Your data is processed entirely in your browser memory. Nothing is ever uploaded to a server.</p>
+                    <p>Once your file arrives via email, download it and upload it above. This normally takes instagram a few minutes, but in rare cases may be multiple days. Your data is processed entirely in your browser memory, so we can't see anything!</p>
                 </div>
 
                 <div class="step">
                     <h3>3. Clean the List</h3>
-                    <p>Click a username to verify their profile. If it's a deleted account or a celebrity, hit <b>Dismiss</b> to move them to the Graveyard. If you make a mistake, you can <b>Restore</b> them anytime.</p>
-                    <div class="screenshot-placeholder">
-                        [Image: UI Demo of Dismiss/Restore logic]
-                    </div>
+                    <p>Click a username to verify their profile. Hit <b>Dismiss</b> to move them to the Graveyard once you unfollow that traitor or if they are a celebrity (They not following u back lmao). Click restore if you want to move someone back to the Hit List.</p>
                 </div>
 
             </div>
@@ -275,20 +217,16 @@
 
         <main class="dashboard">
             <section class="list-card">
-                <h2>🚨 The Hit List</h2>
+                <h2>The Hit List</h2>
                 <ul id="traitor-list">
-                    <li style="border: none; color: var(--text-muted); font-style: italic;">
-                        Upload a file to start hunting...
-                    </li>
+                    <li style="border: none; color: var(--text-muted); font-style: italic;">Upload a file to start hunting...</li>
                 </ul>
             </section>
 
             <section class="list-card">
-                <h2>🪦 The Graveyard</h2>
+                <h2>The Graveyard</h2>
                 <ul id="dismissed-list">
-                    <li style="border: none; color: var(--text-muted); font-style: italic;">
-                        Dismissed accounts appear here.
-                    </li>
+                    <li style="border: none; color: var(--text-muted); font-style: italic;">Dismissed accounts appear here.</li>
                 </ul>
             </section>
         </main>
