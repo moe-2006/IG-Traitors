@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IG Traitor| Privacy-First IG Audit</title>
+    <title>Traitor Tracker</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        /* --- GUCCI CSS VARIABLES --- */
         :root {
             --bg: #0f172a;
             --card: #1e293b;
@@ -19,47 +21,95 @@
             --border: #334155;
         }
 
+        /* --- GLOBAL LAYOUT --- */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
             padding: 40px 20px;
         }
 
-        .container { max-width: 900px; width: 100%; }
-
-        .upload-section {
-            background: var(--card);
-            padding: 40px;
-            border-radius: 16px;
-            border: 2px dashed var(--accent);
-            text-align: center;
-            margin-bottom: 20px;
+        .container { 
+            max-width: 1000px; 
+            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        h1 { color: var(--accent); margin-bottom: 10px; font-size: 2.5rem; }
-        .subtitle { color: var(--text-muted); margin-bottom: 25px; }
+        /* --- THE HEADER BOX --- */
+        .main-header {
+            background: linear-gradient(145deg, #1e293b, #0f172a); 
+            border: 1px solid var(--border); 
+            border-radius: 24px; 
+            padding: 60px 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3.5rem; 
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin: 0;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-top: 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- UPLOAD CONTROLS --- */
+        .upload-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
 
         #zip-upload { display: none; }
 
         .custom-file-label {
-            display: inline-block;
-            padding: 12px 28px;
             background-color: var(--accent);
             color: var(--bg);
-            font-weight: 700;
-            border-radius: 50px;
+            padding: 16px 40px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            border-radius: 12px;
             cursor: pointer;
-            transition: 0.3s;
             text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .file-name-display { margin-top: 15px; color: var(--text-muted); font-family: monospace; }
+        .custom-file-label:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 15px 30px rgba(56, 189, 248, 0.4);
+        }
 
+        .file-name-display { color: var(--text-muted); font-family: monospace; }
+
+        /* --- INSTRUCTIONS SECTION --- */
         .how-to-use {
             background: var(--card);
             border-radius: 12px;
@@ -67,17 +117,42 @@
             border: 1px solid var(--border);
             overflow: hidden;
             text-align: left;
+            width: 100%;
         }
 
-        summary { padding: 15px 20px; cursor: pointer; color: var(--accent); font-weight: 600; background: #1e293b; }
-
+        summary { 
+            padding: 15px 20px; 
+            cursor: pointer; 
+            color: var(--accent); 
+            font-weight: 600; 
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
         .instructions-content { padding: 25px; border-top: 1px solid var(--border); }
 
         .step { margin-bottom: 30px; }
         .step h3 { color: var(--accent); margin-bottom: 10px; }
+        
+        .step ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        .step li {
+            display: list-item;
+            color: var(--text-muted);
+            padding: 6px 0;
+            border: none;
+            line-height: 1.5;
+        }
 
         .highlight-jump {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             margin-top: 15px;
             padding: 12px 24px;
             font-weight: 800;
@@ -85,112 +160,119 @@
             color: white !important;
             border-radius: 8px;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
+        .highlight-jump:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(220, 39, 67, 0.5);
+            filter: brightness(1.1);
+        }
+
+        /* --- VERTICAL SCREENSHOT BOX --- */
         .screenshot-placeholder {
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        margin-top: 20px;
-
-        /* --- VERTICAL PHONE RATIO --- */
-        width: 280px;      /* Fixed width for a "phone" look */
-        height: 500px;     /* Taller height to fit the whole scroll */
-
-        /* Perfect Center */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        overflow: hidden;
-        /* Optional: center the box itself if the text is centered */
-        margin-left: auto;
-        margin-right: auto;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 280px;      
+            height: 500px;     
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-left: auto; 
+            margin-right: auto;
         }
 
-        .step-img {
-        width: 100%;
-        height: 100%;
-        /* 'contain' ensures the whole phone screen is visible */
-        object-fit: contain; 
-        display: block;
-        }
-        .step {
-        margin-bottom: 25px;
-        background: #1e293b; /* Match card color */
-        padding: 20px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        }
-        /* 1. Make sure the body/container pushes everything to the middle */
-        body {
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* Centers items horizontally */
-        justify-content: flex-start;
-        min-height: 100vh;
-        margin: 0;
+        .step-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            display: block; 
         }
 
-        /* 2. Constrain the container so it doesn't span the whole 4K screen */
-        .container {
-        width: 100%;
-        max-width: 1000px; /* Adjust this to make the dashboard wider/narrower */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        /* --- DASHBOARD SECTION --- */
+        .dashboard { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 25px; 
+            width: 100%;
+            justify-content: center;
         }
-
-        /* 3. Make the Dashboard grid center its content */
-        .dashboard {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* Two equal columns */
-        gap: 25px;
-        width: 100%; /* Fill the container */
-        justify-content: center; /* Centers the grid itself */
-        }
-
-        /* 4. Center the text inside the cards */
-        .list-card h2 {
-        text-align: center;
-        justify-content: center; /* If using flex in H2 */
-        }
-
-        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .list-card { background: var(--card); border-radius: 16px; padding: 25px; min-height: 400px; border: 1px solid var(--border); }
-        h2 { border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        ul { list-style: none; padding: 0; }
-        li { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid #334155; }
-        li a { color: var(--text); text-decoration: none; }
         
-        .btn { padding: 6px 14px; border-radius: 8px; cursor: pointer; background: transparent; }
-        #traitor-list .btn { color: var(--danger); border: 1px solid var(--danger); }
-        #dismissed-list .btn { color: var(--success); border: 1px solid var(--success); }
+        .list-card { 
+            background: var(--card); 
+            border-radius: 16px; 
+            padding: 25px; 
+            min-height: 400px; 
+            border: 1px solid var(--border); 
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-        @media (max-width: 600px) { .dashboard { grid-template-columns: 1fr; } }
+        h2 { 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 15px; 
+            text-align: center; 
+            margin-top: 0; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .dashboard ul { list-style: none; padding: 0; margin: 0; }
+        .dashboard li { display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; border-bottom: 1px solid #334155; }
+        .dashboard li a { color: var(--text); text-decoration: none; }
+        .dashboard li a:hover { color: var(--accent); }
+        
+        .btn { padding: 6px 14px; border-radius: 8px; cursor: pointer; background: transparent; text-transform: uppercase; font-size: 0.75rem; border: 1px solid currentColor; }
+        #traitor-list .btn { color: var(--danger); }
+        #traitor-list .btn:hover { background: var(--danger); color: white; }
+        #dismissed-list .btn { color: var(--success); }
+        #dismissed-list .btn:hover { background: var(--success); color: white; }
+
+        @media (max-width: 768px) { 
+            .dashboard { grid-template-columns: 1fr; } 
+            .gradient-text { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header class="upload-section">
-            <h1>IG Traitor</h1>
-            <p class="subtitle">Securely identify who isn't following you back.</p>
-            <input type="file" id="zip-upload" accept=".zip" hidden>
-            <label for="zip-upload" class="custom-file-label">Select Your Instagram Zip</label>
-            <div id="file-name" class="file-name-display">No file chosen</div>
+        
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="gradient-text">Traitor Tracker</h1>
+                <p class="subtitle">Identify traitors who don't follow you back on IG.</p>
+            </div>
+
+            <div class="upload-controls">
+                <input type="file" id="zip-upload" accept=".zip" hidden>
+                <label for="zip-upload" class="custom-file-label">
+                    <i data-lucide="upload-cloud" width="20" height="20"></i> Select Instagram Zip
+                </label>
+                <div id="file-name" class="file-name-display">No file chosen</div>
+            </div>
         </header>
 
         <details class="how-to-use">
-            <summary>You new around here? View the Guide below for Instructions.</summary>
+            <summary><i data-lucide="book-open" width="20" height="20"></i> New here? View the Quick Start Guide</summary>
             <div class="instructions-content">
                 
                 <div class="step">
                     <h3>1. Request Your Data from Instagram</h3>
-                    <p>Use the direct link below to jump straight to Meta's Download Center. <br> Choose <b>"Create Export"</b> > <b>"Export to Device"</b>, and then Customize Information to only <b>"Followers and Following"</b>. When all these steps are done it should match the screenshot.</p>
+                    <ul>
+                        <li>Use the direct link below to jump straight to Meta's Download Center.</li>
+                        <li>Choose <b>"Create Export"</b> > <b>"Export to Device"</b>.</li>
+                        <li>Customize Information to only <b>"Followers and Following"</b>.</li>
+                        <li>When all these steps are done, it should match the screenshot.</li>
+                    </ul>
 
                     <a href="https://accountscenter.instagram.com/info_and_permissions/dyi/" target="_blank" class="highlight-jump">
-                        JUMP TO DOWNLOAD CENTER ↗
+                        JUMP TO DOWNLOAD CENTER <i data-lucide="external-link" width="18" height="18"></i>
                     </a>
 
                     <p style="font-size: 0.8rem; margin-top: 15px; color: var(--accent);">
@@ -204,12 +286,20 @@
 
                 <div class="step">
                     <h3>2. Upload Your .zip File</h3>
-                    <p>Once your file arrives via email, download it and upload it above. This normally takes instagram a few minutes, but in rare cases may be multiple days. Your data is processed entirely in your browser memory, so we can't see anything!</p>
+                    <ul>
+                        <li>Once your file arrives via email, download it and upload it above.</li>
+                        <li>This normally takes Instagram a few minutes, but in rare cases may take multiple days.</li>
+                        <li>Your data is processed entirely in your browser memory, so <b>we can't see anything!</b></li>
+                    </ul>
                 </div>
 
                 <div class="step">
                     <h3>3. Clean the List</h3>
-                    <p>Click a username to verify their profile. Hit <b>Dismiss</b> to move them to the Graveyard once you unfollow that traitor or if they are a celebrity (They not following u back lmao). Click restore if you want to move someone back to the Hit List.</p>
+                    <ul>
+                        <li>Click a username to verify their profile.</li>
+                        <li>Hit <b>Dismiss</b> to move them to the Graveyard once you unfollow that traitor, or if they are a celebrity <i>(they not following u back lmao)</i>.</li>
+                        <li>Click <b>Restore</b> if you want to move someone back to the Hit List.</li>
+                    </ul>
                 </div>
 
             </div>
@@ -217,21 +307,25 @@
 
         <main class="dashboard">
             <section class="list-card">
-                <h2>The Hit List</h2>
+                <h2><i data-lucide="target" color="var(--danger)"></i> The Hit List</h2>
                 <ul id="traitor-list">
-                    <li style="border: none; color: var(--text-muted); font-style: italic;">Upload a file to start hunting...</li>
+                    <li style="border: none; color: var(--text-muted); font-style: italic; justify-content: center;">Upload a file to start hunting...</li>
                 </ul>
             </section>
 
             <section class="list-card">
-                <h2>The Graveyard</h2>
+                <h2><i data-lucide="archive" color="var(--text-muted)"></i> The Graveyard</h2>
                 <ul id="dismissed-list">
-                    <li style="border: none; color: var(--text-muted); font-style: italic;">Dismissed accounts appear here.</li>
+                    <li style="border: none; color: var(--text-muted); font-style: italic; justify-content: center;">Dismissed accounts appear here.</li>
                 </ul>
             </section>
         </main>
     </div>
 
+    <script>
+        lucide.createIcons();
+    </script>
+    
     <script src="main.js"></script>
 </body>
 </html>
